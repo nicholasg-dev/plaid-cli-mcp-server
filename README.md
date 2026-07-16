@@ -639,8 +639,7 @@ curious about the reasoning behind these choices.
 
 ## License
 
-*No license has been added to this repository yet* — meaning, by default,
-all rights are reserved and others are not legally granted permission to
-reuse this code, even though it's publicly viewable. If you'd like others
-to be able to freely use, modify, or contribute to this project, consider
-adding an open-source license (e.g. [MIT](https://choosealicense.com/licenses/mit/)).
+[MIT](./LICENSE) — free and open source. You're welcome to use, modify,
+and distribute this code, including commercially, as long as the original
+copyright notice is kept. See the [LICENSE](./LICENSE) file for the full
+text.
