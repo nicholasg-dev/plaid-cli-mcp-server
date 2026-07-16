@@ -21,6 +21,7 @@ those are and just want the tool reference, jump to
 - [Is this safe? / Who should (and shouldn't) use this](#is-this-safe--who-should-and-shouldnt-use-this)
 - [Glossary](#glossary)
 - [Prerequisites](#prerequisites)
+- [Setting up a Plaid account and the Plaid CLI](#setting-up-a-plaid-account-and-the-plaid-cli)
 - [Quick start](#quick-start)
 - [Registering with Claude Code](#registering-with-claude-code)
 - [Using this with OpenCode](#using-this-with-opencode)
@@ -122,9 +123,9 @@ this project. None of them are things this project installs for you.
 | A terminal | See [glossary](#glossary) | Built into macOS/Linux ("Terminal"); on Windows, use [WSL](https://learn.microsoft.com/windows/wsl/install) or Git Bash. |
 | [Git](https://git-scm.com/) | Used to download this repository | `brew install git` (macOS) or see [git-scm.com/downloads](https://git-scm.com/downloads) |
 | [Node.js](https://nodejs.org/) v22 or newer | Runs this project's code | Download from [nodejs.org](https://nodejs.org/) (includes `npm`), or `brew install node` on macOS |
-| [Plaid CLI](https://plaid.com/docs/resources/cli/) (`plaid`) | The tool this server talks to | `brew install plaid/plaid-cli/plaid` (macOS/Homebrew), or see the [official install docs](https://plaid.com/docs/resources/cli/) for other platforms |
-| A Plaid account, logged in via the CLI | Lets the CLI actually fetch your data | Run `plaid login` (opens a browser to log in to the Plaid Dashboard) |
-| At least one linked bank ("Item") | The actual bank connection you want to ask about | Run `plaid link` (or `plaid item link`, depending on your CLI version) and follow the prompts to connect a real bank account |
+| [Plaid CLI](https://plaid.com/docs/resources/cli/) (`plaid`) | The tool this server talks to | See [Setting up a Plaid account and the Plaid CLI](#setting-up-a-plaid-account-and-the-plaid-cli), below |
+| A Plaid account, logged in via the CLI | Lets the CLI actually fetch your data | See [Setting up a Plaid account and the Plaid CLI](#setting-up-a-plaid-account-and-the-plaid-cli), below |
+| At least one linked bank ("Item") | The actual bank connection you want to ask about | See [Setting up a Plaid account and the Plaid CLI](#setting-up-a-plaid-account-and-the-plaid-cli), below |
 | [Claude Code](https://claude.com/claude-code) | The AI assistant that will use this server | See Anthropic's [installation instructions](https://docs.claude.com/en/docs/claude-code) |
 
 **Check your Plaid CLI setup works before going any further** — every tool
@@ -136,8 +137,109 @@ plaid item list --json # should print your linked bank(s) as JSON, not an error
 ```
 
 If either of those doesn't work, fix that first (usually by running
-`plaid login` and/or `plaid link`) — this project can't do anything the
-CLI itself can't already do.
+`plaid login` and/or `plaid link`, both covered step by step below) — this
+project can't do anything the CLI itself can't already do.
+
+## Setting up a Plaid account and the Plaid CLI
+
+If you've never used Plaid before, this section walks through everything
+from "I have no Plaid account" to "the CLI can see my real bank balance" —
+all of it happens through Plaid's own CLI and dashboard, before you ever
+touch this project's code.
+
+### 1. Install the Plaid CLI
+
+The [official Plaid CLI docs](https://plaid.com/docs/resources/cli/) only
+document one installation method, via [Homebrew](https://brew.sh/):
+
+```bash
+brew install plaid/plaid-cli/plaid
+```
+
+- **macOS:** works directly, as above. If you don't have Homebrew yet, install
+  it first from [brew.sh](https://brew.sh/).
+- **Linux:** Homebrew also works on Linux ([Linuxbrew](https://docs.brew.sh/Homebrew-on-Linux)) — install Homebrew first, then run the same command.
+- **Windows:** Plaid doesn't document a native Windows install. The most
+  reliable path is to install [WSL](https://learn.microsoft.com/windows/wsl/install)
+  (Windows Subsystem for Linux), then install Homebrew and the CLI inside
+  your WSL Linux environment as above.
+
+Confirm it installed correctly:
+
+```bash
+plaid --version
+```
+
+### 2. Create a Plaid account
+
+If you don't already have one, sign up right from the CLI:
+
+```bash
+plaid register
+```
+
+This opens Plaid's dashboard signup page in your browser. Create your
+account there (email/password or SSO, plus verifying your email) — this is
+Plaid's own signup flow, not anything specific to this project.
+
+Every new Plaid account automatically gets access to the **Sandbox**
+environment — a fake/test environment with fake banks and fake data, meant
+for developers to try things out safely. Sandbox alone isn't enough to see
+your own real bank data — for that, you need Production access, which is
+the next step.
+
+### 3. Log in via the CLI
+
+```bash
+plaid login
+```
+
+This opens your browser to log in to the account you just created. Once
+you approve it, the CLI stores your login locally and automatically
+fetches your API keys — you don't need to find or copy/paste any keys
+yourself.
+
+### 4. Get approved for Production access (to use a real bank)
+
+By default your account can only use Plaid's fake Sandbox data. To connect
+an actual bank account, you need to apply for Plaid's **Trial** plan:
+
+```bash
+plaid trial
+```
+
+This opens a short application form in your browser — no business
+paperwork required for the Trial plan, and Plaid states that around 90% of
+applicants are auto-approved within about 60 seconds. Once approved, pull
+down your newly-unlocked Production API keys:
+
+```bash
+plaid keys fetch
+```
+
+### 5. Link a real bank account
+
+```bash
+plaid link
+```
+
+This opens Plaid's own "Link" flow in your browser — the same secure
+bank-connection widget used by apps like Venmo. Search for your bank, log
+in with your real online banking credentials (this happens inside Plaid's
+own widget — this project, and the Plaid CLI itself, never see or store
+your bank password), and choose which account(s) to connect. Plaid calls
+each connection you create this way an **Item** (see
+[Glossary](#glossary)).
+
+### 6. Confirm it worked
+
+```bash
+plaid item list --json
+```
+
+This should print JSON describing the bank connection you just linked. If
+it does, you're fully set up — continue to [Quick start](#quick-start) to
+set up this project itself.
 
 ## Quick start
 
