@@ -554,7 +554,6 @@ plaid-mcp/
     plaidCli.ts        # The one place that actually runs the `plaid` CLI program
     itemHealth.ts      # Logic behind check_item_health
   tests/               # Automated tests (see Development, below)
-  docs/superpowers/    # Internal design notes from when this was built — not required reading, kept for history/transparency
   dist/                # Compiled output — created by `npm run build`, not checked into Git
   package.json         # Project metadata and dependency list
   tsconfig.json         # TypeScript compiler settings
@@ -632,10 +631,6 @@ To be explicit about what this project intentionally does *not* do:
 - **No credential storage.** Login and API keys are entirely the Plaid
   CLI's responsibility; this project has nowhere to keep them even if it
   wanted to.
-
-The original design document, written before this project was built, is
-kept at `docs/superpowers/specs/2026-07-15-plaid-mcp-design.md` for anyone
-curious about the reasoning behind these choices.
 
 ## License
 
